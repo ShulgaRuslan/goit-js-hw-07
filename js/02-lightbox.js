@@ -29,4 +29,8 @@ function addMarkupItems(galleryItems) {
         .join('');
 };
 
-const lightbox = new SimpleLightbox('.gallery a', { captionsData: `alt`, captionDelay: 250, scrollZoom: false, });
+var lightbox = new SimpleLightbox('.gallery a', { captionsData: `alt`, captionDelay: 250, scrollZoom: false, });
+
+
+
+

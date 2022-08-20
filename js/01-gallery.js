@@ -23,50 +23,53 @@
 
 import { galleryItems } from './gallery-items.js';
 // Change code below this line
-const gallery = document.querySelector('.gallery');
-gallery.insertAdjacentHTML('beforeend', galleryCreate(galleryItems));
+
+const galleryRef = document.querySelector('.gallery');
+const galleryMarkup = createGalleryItems(galleryItems);
+
+galleryRef.insertAdjacentHTML('beforeend', galleryMarkup);
+galleryRef.addEventListener('click', onGalleryClick);
+
+let clickImg = basicLightbox.create(`<img src="" width="800" height="600">`)
 
 
-function galleryCreate() {
-    return galleryItems
-        .map(({ preview, original, description }) => {
-        return `<div class="gallery__item">
-  <a class="gallery__link" href="${original.value}">
-    <img
-      class="gallery__image"
-      src="${preview}"
-      data-source="${original}"
-      alt="${description}"
-    />
-  </a>
-</div>`;
-            
+function createGalleryItems(galleryItems) {
+    return galleryItems.map(({ preview, original, description }) => {
+        return `<a class="gallery__link" href="${original}">
+         <img
+         class="gallery__image"
+         src="${preview}"
+         data-source="${original}"
+         alt="${description}"
+         />
+         </a>
+         </div>`
     }).join('');
-};
-const clickImage = (evt) => {
-    evt.preventDefault();
-
-    if (evt.target.classList.contains('gallery')) return;
-    const source = evt.target.dataset.source;
-
-    const instance = basicLightbox.create(`<img src="${source}" width="800" heigth="600">`,
-        {
-        onShow: instance => {
-          document.addEventListener('keydown', onEscapeBtn);
-        },
-        onClose: instance => {
-          document.removeEventListener('keydown', onEscapeBtn);
-        }
-        }
-    )
-    
-    instance.show();  
-
-    function onEscapeBtn(evt) {
-    if (evt.code === 'Escape') instance.close()
-    }
 }
 
-gallery.addEventListener('click', clickImage)
+function onGalleryClick(e) {
+    e.preventDefault();
+    if (!e.target.classList.contains('gallery__image')) {
+        return;
+    }
+    modalShow(e);
+}
 
+function modalShow(e) {
+  // .element()Returns the DOM element/node associated with the instance.
+// Example:
+// const elem = instance.element()
+const createElementSrc = clickImg.element().querySelector('img').src = e.target.dataset.source;
+clickImg.show(createElementSrc);
+
+
+document.addEventListener('keydown', keyBoardPress)
+
+function keyBoardPress(e) {
+    if (e.code === 'Escape') {
+        clickImg.close();
+        document.removeEventListener('keydown', keyBoardPress)
+    }
+}
+}
 console.log(galleryItems);
